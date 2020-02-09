@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/permissionCheckFragment">
+
+    <fragment
+        android:id="@+id/permissionCheckFragment"
+        android:name="com.io.tatsuki.otoshidamachallenge.PermissionFragment"
+        android:label="fragmentPermissionCheck">
+        <action
+            android:id="@+id/goToCameraToPermissionCheck"
+            app:destination="@id/cameraFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.io.tatsuki.otoshidamachallenge.CameraFragment"
+        android:label="fragmentCamera"/>
+
+</navigation>
