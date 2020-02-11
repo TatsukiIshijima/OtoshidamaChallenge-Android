@@ -1,7 +1,8 @@
 package com.io.tatsuki.otoshidamachallenge
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 
-class CameraViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+class CameraViewModel(application: Application) : AndroidViewModel(application) {
+
 }
