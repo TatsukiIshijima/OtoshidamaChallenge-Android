@@ -2,19 +2,16 @@ package com.io.tatsuki.otoshidamachallenge
 
 import android.graphics.*
 import android.os.Bundle
-import android.util.DisplayMetrics
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
+import android.util.Rational
 import android.view.*
-import androidx.camera.core.AspectRatio
-import androidx.camera.core.CameraX
-import androidx.camera.core.Preview
-import androidx.camera.core.PreviewConfig
+import androidx.camera.core.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.camera_fragment.*
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 class CameraFragment : Fragment() {
 
@@ -48,44 +45,53 @@ class CameraFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
 
-        viewFinder.post {
-            startCamera()
-        }
-        viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            updateTransform()
-        }
+        viewModel.isReadyEvent
+            .observe(viewLifecycleOwner, Observer { event ->
+                event.getContentIfNotHandled()?.let {
 
-        overlay.apply {
-            setZOrderOnTop(true)
-            holder.setFormat(PixelFormat.TRANSPARENT)
-            holder.addCallback(object : SurfaceHolder.Callback {
+                    if (it) {
+                        viewFinder.post {
+                            startCamera()
+                        }
+                        viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+                            updateTransform()
+                        }
+                        overlay.apply {
+                            setZOrderOnTop(true)
+                            holder.setFormat(PixelFormat.TRANSPARENT)
+                            holder.addCallback(object : SurfaceHolder.Callback {
 
-                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                    // noop
+                                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+                                    // noop
+                                }
+
+                                override fun surfaceDestroyed(holder: SurfaceHolder?) {
+                                    // noop
+                                }
+
+                                override fun surfaceCreated(holder: SurfaceHolder?) {
+                                    holder?.let { drawOverlay(it) }
+                                }
+                            })
+                        }
+                    }
                 }
+        })
 
-                override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                    // noop
-                }
-
-                override fun surfaceCreated(holder: SurfaceHolder?) {
-                    holder?.let { drawOverlay(it) }
+        viewModel.resultText
+            .observe(viewLifecycleOwner, Observer {
+                if (!it.isNullOrEmpty()) {
+                    Log.d(TAG, it)
                 }
             })
-        }
+
+        viewModel.checkTrainedData(requireContext())
     }
 
     private fun startCamera() {
+
         val previewConfig = PreviewConfig.Builder().apply {
-
-            val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
-            Log.d(TAG, "Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
-
-            val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
-            Log.d(TAG, "Preview aspect ratio: $screenAspectRatio")
-
-            setTargetAspectRatio(screenAspectRatio)
-
+            setTargetAspectRatio(Rational(1, 1))
         }.build()
 
         val preview = Preview(previewConfig)
@@ -100,6 +106,26 @@ class CameraFragment : Fragment() {
             updateTransform()
         }
 
+        val analyzerConfig = ImageAnalysisConfig.Builder().apply {
+            val analyzerThread = HandlerThread(
+                "TextAnalysis"
+            ).apply { start() }
+            setCallbackHandler(Handler(analyzerThread.looper))
+            setImageReaderMode(
+                ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE
+            )
+        }.build()
+
+        val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
+            analyzer = TextAnalyzer(
+                viewModel.resultText,
+                WIDTH_CROP_PERCENT,
+                HEIGHT_CROP_PERCENT
+            )
+        }
+
+        //CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
+        // 以下実験用
         CameraX.bindToLifecycle(viewLifecycleOwner, preview)
     }
 
@@ -119,14 +145,6 @@ class CameraFragment : Fragment() {
         matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
 
         viewFinder.setTransform(matrix)
-    }
-
-    private fun aspectRatio(width: Int, height: Int): AspectRatio {
-        val previewRatio = max(width, height).toDouble() / min(width, height)
-        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
-            return AspectRatio.RATIO_4_3
-        }
-        return AspectRatio.RATIO_16_9
     }
 
     private fun drawOverlay(holder: SurfaceHolder) {
