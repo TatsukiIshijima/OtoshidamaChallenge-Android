@@ -141,6 +141,7 @@ class CameraFragment : Fragment() {
                 HEIGHT_CROP_PERCENT)
         }
 
+        //CameraX.bindToLifecycle(viewLifecycleOwner, preview)
         CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 

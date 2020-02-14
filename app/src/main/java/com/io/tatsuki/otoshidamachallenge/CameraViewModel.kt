@@ -14,7 +14,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
 
     companion object {
         private val TESS_DATA_DIR = "tessdata" + File.separator
-        private const val TESS_TRAINED_DATA = "eng.traineddata"
+        private const val TESS_TRAINED_DATA = "jpnnew.traineddata"
     }
 
     private lateinit var textAnalyzer: TextAnalyzer

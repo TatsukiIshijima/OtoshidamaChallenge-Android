@@ -23,7 +23,7 @@ class TextAnalyzer(
     private val baseApi = TessBaseAPI()
 
     init {
-        baseApi.init(context.filesDir.toString(), "eng")
+        baseApi.init(context.filesDir.toString(), "jpnnew")
     }
 
     override fun analyze(imageProxy: ImageProxy, rotationDegrees: Int) {
