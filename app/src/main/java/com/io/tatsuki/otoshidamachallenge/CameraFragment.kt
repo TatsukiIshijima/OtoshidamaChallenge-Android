@@ -10,6 +10,7 @@ import androidx.camera.core.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.camera_fragment.*
 
 class CameraFragment : Fragment() {
@@ -27,8 +28,14 @@ class CameraFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (!PermissionFragment.hasPermissions(requireContext())) {
-            // TODO:ダイアログ表示してアプリ終了
-            requireActivity().finish()
+            MaterialAlertDialogBuilder(requireContext())
+                .setCancelable(false)
+                .setTitle(R.string.camera_permission_denied_title)
+                .setMessage(R.string.camera_permission_denied_message)
+                .setPositiveButton(R.string.alert_dialog_positive_button_title) { _ ,_ ->
+                    requireActivity().finish()
+                }
+                .show()
         }
     }
 

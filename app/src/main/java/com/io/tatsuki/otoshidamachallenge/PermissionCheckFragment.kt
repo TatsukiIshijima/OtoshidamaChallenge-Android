@@ -4,10 +4,10 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class PermissionFragment : Fragment() {
 
@@ -41,8 +41,14 @@ class PermissionFragment : Fragment() {
             if (PackageManager.PERMISSION_GRANTED == grantResults.firstOrNull()) {
                 findNavController().navigate(R.id.goToCameraToPermissionCheck)
             } else {
-                // TODO:ダイアログ表示して、アプリ終了
-                Toast.makeText(context, "Permission request denied", Toast.LENGTH_LONG).show()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setCancelable(false)
+                    .setTitle(R.string.camera_permission_denied_title)
+                    .setMessage(R.string.camera_permission_denied_message)
+                    .setPositiveButton(R.string.alert_dialog_positive_button_title) { _ ,_ ->
+                        requireActivity().finish()
+                    }
+                    .show()
             }
         }
     }
