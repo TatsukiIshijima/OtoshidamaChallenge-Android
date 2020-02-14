@@ -4,7 +4,6 @@ import android.graphics.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.util.Log
 import android.util.Rational
 import android.view.*
 import androidx.camera.core.*
@@ -81,11 +80,16 @@ class CameraFragment : Fragment() {
         viewModel.resultText
             .observe(viewLifecycleOwner, Observer {
                 if (!it.isNullOrEmpty()) {
-                    Log.d(TAG, it)
+                    recognitionResult.text = it
                 }
             })
 
         viewModel.checkTrainedData(requireContext())
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.releaseAnalyzer()
     }
 
     private fun startCamera() {
@@ -117,16 +121,13 @@ class CameraFragment : Fragment() {
         }.build()
 
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            analyzer = TextAnalyzer(
-                viewModel.resultText,
+            analyzer = viewModel.initTextAnalyzer(
+                requireContext(),
                 WIDTH_CROP_PERCENT,
-                HEIGHT_CROP_PERCENT
-            )
+                HEIGHT_CROP_PERCENT)
         }
 
-        //CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
-        // 以下実験用
-        CameraX.bindToLifecycle(viewLifecycleOwner, preview)
+        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {

@@ -17,6 +17,8 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         private const val TESS_TRAINED_DATA = "eng.traineddata"
     }
 
+    private lateinit var textAnalyzer: TextAnalyzer
+
     private val _isReadyEvent = MutableLiveData<Event<Boolean>>()
     val isReadyEvent: LiveData<Event<Boolean>> = _isReadyEvent
 
@@ -70,5 +72,21 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    fun initTextAnalyzer(context: Context,
+                         widthCropPercent: Int,
+                         heightCropPercent: Int): TextAnalyzer {
+        textAnalyzer = TextAnalyzer(
+            _resultText,
+            context,
+            widthCropPercent,
+            heightCropPercent
+        )
+        return textAnalyzer
+    }
+
+    fun releaseAnalyzer() {
+        textAnalyzer.end()
     }
 }
