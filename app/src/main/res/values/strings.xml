@@ -3,7 +3,7 @@
     <string name="action_settings">設定</string>
     <string name="overlay_help">中央に番号を合わせてください</string>
     <string name="downloading_model_files">準備中…</string>
-    <string name="recognition_result">結果：%1$s</string>
+    <string name="recognition_result_title">認識結果</string>
     <string name="camera_permission_denied_title">権限エラー</string>
     <string name="camera_permission_denied_message">カメラの使用権限が得られません。設定アプリから「お年玉チャレンジ」のカメラの使用を許可して下さい。</string>
     <string name="alert_dialog_positive_button_title">OK</string>

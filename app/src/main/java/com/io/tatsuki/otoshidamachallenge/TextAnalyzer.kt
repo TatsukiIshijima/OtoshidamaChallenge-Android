@@ -3,7 +3,6 @@ package com.io.tatsuki.otoshidamachallenge
 import android.content.Context
 import android.graphics.*
 import android.media.Image
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.MutableLiveData
@@ -38,7 +37,6 @@ class TextAnalyzer(
             val cropBmp = Bitmap.createBitmap(bitmap, x, y, croppedWidth, croppedHeight)
             baseApi.setImage(cropBmp)
             result.postValue(baseApi.utF8Text)
-            Log.d(TAG, "recognize result : ${baseApi.utF8Text}")
         }
     }
 

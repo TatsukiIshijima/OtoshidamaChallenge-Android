@@ -4,6 +4,7 @@ import android.graphics.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import android.util.Rational
 import android.view.*
 import androidx.camera.core.*
@@ -53,11 +54,13 @@ class CameraFragment : Fragment() {
 
         viewModel.isReadyEvent
             .observe(viewLifecycleOwner, Observer { event ->
-                event.getContentIfNotHandled()?.let {
+                event.getContentIfNotHandled()?.let { isReady ->
 
-                    if (it) {
+                    if (isReady) {
                         viewFinder.post {
                             startCamera()
+                            showProgress(false)
+                            showMainContent(true)
                         }
                         viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
                             updateTransform()
@@ -87,9 +90,13 @@ class CameraFragment : Fragment() {
         viewModel.resultText
             .observe(viewLifecycleOwner, Observer {
                 if (!it.isNullOrEmpty()) {
+                    Log.d(TAG, "recognized result : ${it}")
                     recognitionResult.text = it
                 }
             })
+
+        showMainContent(false)
+        showProgress(true)
 
         viewModel.checkTrainedData(requireContext())
     }
@@ -196,5 +203,16 @@ class CameraFragment : Fragment() {
         val textY = rectBottom + textBounds.height() + 15f // put text below rect and 15f padding
         canvas.drawText(getString(R.string.overlay_help), textX, textY, textPaint)
         holder.unlockCanvasAndPost(canvas)
+    }
+
+    private fun showProgress(isShow: Boolean) {
+        progressBar.visibility = if (isShow) View.VISIBLE else View.GONE
+        progressText.visibility = if (isShow) View.VISIBLE else View.GONE
+    }
+
+    private fun showMainContent(isShow: Boolean) {
+        recognitionResultTitle.visibility = if (isShow) View.VISIBLE else View.GONE
+        recognitionResult.visibility = if (isShow) View.VISIBLE else View.GONE
+        matchingRank.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 }
