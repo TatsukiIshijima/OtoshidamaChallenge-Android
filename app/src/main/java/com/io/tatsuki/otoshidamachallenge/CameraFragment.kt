@@ -4,12 +4,10 @@ import android.graphics.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.util.Log
 import android.util.Rational
 import android.view.*
 import androidx.camera.core.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.camera_fragment.*
@@ -52,58 +50,31 @@ class CameraFragment : Fragment() {
 
         viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
 
-        viewModel.isReadyEvent
-            .observe(viewLifecycleOwner, Observer { event ->
-                event.getContentIfNotHandled()?.let { isReady ->
+        viewFinder.post {
+            startCamera()
+        }
+        viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            updateTransform()
+        }
 
-                    if (isReady) {
-                        viewFinder.post {
-                            startCamera()
-                            showProgress(false)
-                            showMainContent(true)
-                        }
-                        viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-                            updateTransform()
-                        }
-                        overlay.apply {
-                            setZOrderOnTop(true)
-                            holder.setFormat(PixelFormat.TRANSPARENT)
-                            holder.addCallback(object : SurfaceHolder.Callback {
+        overlay.apply {
+            setZOrderOnTop(true)
+            holder.setFormat(PixelFormat.TRANSPARENT)
+            holder.addCallback(object : SurfaceHolder.Callback {
 
-                                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                                    // noop
-                                }
-
-                                override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                                    // noop
-                                }
-
-                                override fun surfaceCreated(holder: SurfaceHolder?) {
-                                    holder?.let { drawOverlay(it) }
-                                }
-                            })
-                        }
-                    }
+                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
+                    // noop
                 }
-        })
 
-        viewModel.resultText
-            .observe(viewLifecycleOwner, Observer {
-                if (!it.isNullOrEmpty()) {
-                    Log.d(TAG, "recognized result : ${it}")
-                    recognitionResult.text = it
+                override fun surfaceDestroyed(holder: SurfaceHolder?) {
+                    // noop
+                }
+
+                override fun surfaceCreated(holder: SurfaceHolder?) {
+                    holder?.let { drawOverlay(it) }
                 }
             })
-
-        showMainContent(false)
-        showProgress(true)
-
-        viewModel.checkTrainedData(requireContext())
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        viewModel.releaseAnalyzer()
+        }
     }
 
     private fun startCamera() {
@@ -135,14 +106,15 @@ class CameraFragment : Fragment() {
         }.build()
 
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            analyzer = viewModel.initTextAnalyzer(
-                requireContext(),
+            analyzer = TextAnalyzer(
+                viewModel.resultText,
                 WIDTH_CROP_PERCENT,
-                HEIGHT_CROP_PERCENT)
+                HEIGHT_CROP_PERCENT
+            )
         }
 
-        //CameraX.bindToLifecycle(viewLifecycleOwner, preview)
-        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(viewLifecycleOwner, preview)
+        //CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {

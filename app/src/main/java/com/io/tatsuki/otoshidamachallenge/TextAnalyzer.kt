@@ -1,17 +1,20 @@
 package com.io.tatsuki.otoshidamachallenge
 
-import android.content.Context
 import android.graphics.*
 import android.media.Image
+import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.MutableLiveData
-import com.googlecode.tesseract.android.TessBaseAPI
+import com.google.android.gms.tasks.Task
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import com.google.firebase.ml.vision.text.FirebaseVisionText
 import java.io.ByteArrayOutputStream
 
 class TextAnalyzer(
     private val result: MutableLiveData<String>,
-    context: Context,
     private val widthCropPercent: Int,
     private val heightCropPercent: Int
 ) : ImageAnalysis.Analyzer {
@@ -20,28 +23,48 @@ class TextAnalyzer(
         private val TAG = TextAnalyzer::class.java.simpleName
     }
 
-    private val baseApi = TessBaseAPI()
-
-    init {
-        baseApi.init(context.filesDir.toString(), "jpnnew")
-    }
+    private val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
+    private var isBusy = false
 
     override fun analyze(imageProxy: ImageProxy, rotationDegrees: Int) {
         val mediaImage = imageProxy.image
-        if (mediaImage != null) {
-            val bitmap = mediaImage.toBitmap()
+        if (mediaImage != null && !isBusy) {
+            isBusy = true
+            val imageRotation = degreesToFirebaseRotation(rotationDegrees)
+            val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
+            val bitmap = image.bitmap
             val croppedWidth = (bitmap.width * (1 - widthCropPercent / 100f)).toInt()
             val croppedHeight = (bitmap.height * (1 - heightCropPercent / 100f)).toInt()
             val x = (bitmap.width - croppedWidth) / 2
             val y = (bitmap.height - croppedHeight) / 2
             val cropBmp = Bitmap.createBitmap(bitmap, x, y, croppedWidth, croppedHeight)
-            baseApi.setImage(cropBmp)
-            result.postValue(baseApi.utF8Text)
+            recognizeTextOnDevice(FirebaseVisionImage.fromBitmap(cropBmp))
+                .addOnCompleteListener { isBusy = false }
         }
     }
 
-    fun end() {
-        baseApi.end()
+    private fun recognizeTextOnDevice(
+        image: FirebaseVisionImage
+    ): Task<FirebaseVisionText> {
+        return detector.processImage(image)
+            .addOnSuccessListener { firebaseVisionText ->
+                // Task completed successfully
+                result.value = firebaseVisionText.text
+            }
+            .addOnFailureListener { exception ->
+                // Task failed with an exception
+                exception.message.let {
+                    Log.e(TAG, it)
+                }
+            }
+    }
+
+    private fun degreesToFirebaseRotation(degrees: Int): Int = when(degrees) {
+        0 -> FirebaseVisionImageMetadata.ROTATION_0
+        90 -> FirebaseVisionImageMetadata.ROTATION_90
+        180 -> FirebaseVisionImageMetadata.ROTATION_180
+        270 -> FirebaseVisionImageMetadata.ROTATION_270
+        else -> throw Exception("Rotation must be 0, 90, 180, or 270.")
     }
 }
 
