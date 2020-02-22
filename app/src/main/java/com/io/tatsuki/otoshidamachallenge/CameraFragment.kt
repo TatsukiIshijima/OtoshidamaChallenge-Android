@@ -8,7 +8,7 @@ import android.util.Rational
 import android.view.*
 import androidx.camera.core.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.camera_fragment.*
 
@@ -48,7 +48,7 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(CameraViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CameraViewModel::class.java)
 
         viewFinder.post {
             startCamera()
