@@ -1,13 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SettingsFragment">
 
-    <TextView
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_marginBottom="80dp">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <LinearLayout
+                android:id="@+id/firstClassLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/firstClassTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/first_class"
+                    android:textSize="22sp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <EditText
+                    android:id="@+id/firstClassNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/first_class_hint"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:enabled="false"
+                    tools:enabled="true"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/secondClassLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/firstClassLayout">
+
+                <TextView
+                    android:id="@+id/secondClassTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/second_class"
+                    android:textSize="22sp"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintTop_toBottomOf="@+id/firstClassNumber"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <EditText
+                    android:id="@+id/secondClassNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/second_class_hint"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:enabled="false"
+                    app:layout_constraintTop_toBottomOf="@+id/secondClassTitle"
+                    tools:enabled="true"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/thirdClassLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/secondClassLayout">
+
+                <TextView
+                    android:id="@+id/thirdClassTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/third_class"
+                    android:textSize="22sp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <EditText
+                    android:id="@+id/thridClassNumberPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/third_class_hint"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:enabled="false"
+                    tools:enabled="true"/>
+
+                <EditText
+                    android:id="@+id/thridClassNumberSecondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/third_class_hint"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:enabled="false"
+                    tools:enabled="true"/>
+
+                <EditText
+                    android:id="@+id/thridClassNumberTertiary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
+                    android:hint="@string/third_class_hint"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:enabled="false"
+                    tools:enabled="true"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/specialClassLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/thirdClassLayout">
+
+                <TextView
+                    android:id="@+id/specialClassTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/special"
+                    android:textSize="22sp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/specialHintPrimaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/special_class_hint_primary"
+                    android:textSize="18sp"/>
+
+                <include layout="@layout/lottery_number_edittext_view"/>
+
+                <include layout="@layout/lottery_number_edittext_view"/>
+
+                <include layout="@layout/lottery_number_edittext_view"/>
+
+                <include layout="@layout/lottery_number_edittext_view"/>
+
+                <TextView
+                    android:id="@+id/specialHintSecondaryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/special_class_hint_secondary"
+                    android:textSize="18sp"/>
+
+                <include layout="@layout/lottery_number_edittext_view"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/editButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:text="@string/edit_mode"
+            android:textSize="18sp"
+            android:visibility="visible"
+            tools:visibility="visible"/>
+
+        <LinearLayout
+            android:id="@+id/saveAndCancelButtonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <Button
+                android:id="@+id/saveButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="16dp"
+                android:textSize="18sp"
+                android:text="@string/save_mode"/>
+
+            <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="16dp"
+                android:textSize="18sp"
+                android:text="@string/cancel"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
