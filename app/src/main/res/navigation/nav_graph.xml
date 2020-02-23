@@ -17,15 +17,18 @@
     <fragment
         android:id="@+id/cameraFragment"
         android:name="com.io.tatsuki.otoshidamachallenge.CameraFragment"
-        android:label="fragmentCamera">
+        android:label="@string/app_name">
         <action
             android:id="@+id/goToPermissionFromCamera"
             app:destination="@id/permissionFragment"/>
+        <action
+            android:id="@+id/goToSettingsFromCamera"
+            app:destination="@+id/settingsFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.io.tatsuki.otoshidamachallenge.SettingsFragment"
-        android:label="fragmentSettings"/>
+        android:label="@string/settings_title"/>
 
 </navigation>
