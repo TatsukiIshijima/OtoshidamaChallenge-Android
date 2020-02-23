@@ -24,7 +24,7 @@ class PermissionFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         if (hasPermissions(requireContext())) {
-            findNavController().navigate(R.id.goToCameraToPermissionCheck)
+            findNavController().navigate(R.id.goToCameraFromPermissionCheck)
         } else {
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
         }
@@ -39,7 +39,7 @@ class PermissionFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
             if (PackageManager.PERMISSION_GRANTED == grantResults.firstOrNull()) {
-                findNavController().navigate(R.id.goToCameraToPermissionCheck)
+                findNavController().navigate(R.id.goToCameraFromPermissionCheck)
             } else {
                 MaterialAlertDialogBuilder(requireContext())
                     .setCancelable(false)

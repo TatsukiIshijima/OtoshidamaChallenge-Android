@@ -3,20 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/permissionCheckFragment">
+    app:startDestination="@id/cameraFragment">
 
     <fragment
-        android:id="@+id/permissionCheckFragment"
+        android:id="@+id/permissionFragment"
         android:name="com.io.tatsuki.otoshidamachallenge.PermissionFragment"
         android:label="fragmentPermissionCheck">
         <action
-            android:id="@+id/goToCameraToPermissionCheck"
+            android:id="@+id/goToCameraFromPermissionCheck"
             app:destination="@id/cameraFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/cameraFragment"
         android:name="com.io.tatsuki.otoshidamachallenge.CameraFragment"
-        android:label="fragmentCamera"/>
+        android:label="fragmentCamera">
+        <action
+            android:id="@+id/goToPermissionFromCamera"
+            app:destination="@id/permissionFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.io.tatsuki.otoshidamachallenge.SettingsFragment"
+        android:label="fragmentSettings"/>
 
 </navigation>

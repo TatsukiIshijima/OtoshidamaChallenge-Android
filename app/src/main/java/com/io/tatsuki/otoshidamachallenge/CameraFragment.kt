@@ -9,6 +9,7 @@ import android.view.*
 import androidx.camera.core.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.camera_fragment.*
 
@@ -23,6 +24,14 @@ class CameraFragment : Fragment() {
     }
 
     private lateinit var viewModel: CameraViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (!PermissionFragment.hasPermissions(requireContext())) {
+            findNavController().navigate(R.id.goToPermissionFromCamera)
+        }
+    }
 
     override fun onResume() {
         super.onResume()
