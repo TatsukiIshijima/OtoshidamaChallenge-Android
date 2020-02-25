@@ -8,6 +8,7 @@ import android.util.Rational
 import android.view.*
 import androidx.camera.core.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -84,6 +85,12 @@ class CameraFragment : Fragment() {
                 }
             })
         }
+
+        viewModel.resultText.observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                recognitionResult.text = it
+            }
+        })
     }
 
     private fun startCamera() {
@@ -122,8 +129,8 @@ class CameraFragment : Fragment() {
             )
         }
 
-        CameraX.bindToLifecycle(viewLifecycleOwner, preview)
-        //CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
+        //CameraX.bindToLifecycle(viewLifecycleOwner, preview)
+        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
