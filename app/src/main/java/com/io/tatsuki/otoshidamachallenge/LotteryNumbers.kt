@@ -1,7 +1,9 @@
 package com.io.tatsuki.otoshidamachallenge
 
+import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 
+@JsonClass(generateAdapter = true)
 data class LotteryNumbers(
     val specialPrimaryForward: String = "",
     val specialPrimaryBackward: String = "",
@@ -25,6 +27,9 @@ fun LotteryNumbers.toJson(): String {
 }
 
 fun String.toLotteryNumbers(): LotteryNumbers {
+    if (this.isEmpty()) {
+        return LotteryNumbers()
+    }
     val moshi = Moshi.Builder().build()
     val adapter = moshi.adapter(LotteryNumbers::class.java)
     return adapter.fromJson(this) ?: LotteryNumbers()
