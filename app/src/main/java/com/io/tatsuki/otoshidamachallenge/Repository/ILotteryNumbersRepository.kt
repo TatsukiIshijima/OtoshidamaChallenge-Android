@@ -1,6 +1,6 @@
 package com.io.tatsuki.otoshidamachallenge.Repository
 
-import com.io.tatsuki.otoshidamachallenge.LotteryNumbers
+import com.io.tatsuki.otoshidamachallenge.Model.LotteryNumbers
 
 interface ILotteryNumbersRepository {
 

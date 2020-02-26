@@ -1,4 +1,4 @@
-package com.io.tatsuki.otoshidamachallenge
+package com.io.tatsuki.otoshidamachallenge.View.Permission
 
 import android.Manifest
 import android.content.Context
@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.io.tatsuki.otoshidamachallenge.R
 
 class PermissionFragment : Fragment() {
 
@@ -23,10 +24,16 @@ class PermissionFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (hasPermissions(requireContext())) {
+        if (hasPermissions(
+                requireContext()
+            )
+        ) {
             findNavController().navigate(R.id.goToCameraFromPermissionCheck)
         } else {
-            requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE)
+            requestPermissions(
+                PERMISSIONS_REQUIRED,
+                PERMISSIONS_REQUEST_CODE
+            )
         }
 
     }
@@ -45,7 +52,7 @@ class PermissionFragment : Fragment() {
                     .setCancelable(false)
                     .setTitle(R.string.camera_permission_denied_title)
                     .setMessage(R.string.camera_permission_denied_message)
-                    .setPositiveButton(R.string.alert_dialog_positive_button_title) { _ ,_ ->
+                    .setPositiveButton(R.string.alert_dialog_positive_button_title) { _, _ ->
                         requireActivity().finish()
                     }
                     .show()

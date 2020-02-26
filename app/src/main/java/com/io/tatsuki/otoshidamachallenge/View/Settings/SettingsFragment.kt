@@ -1,4 +1,4 @@
-package com.io.tatsuki.otoshidamachallenge
+package com.io.tatsuki.otoshidamachallenge.View.Settings
 
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.io.tatsuki.otoshidamachallenge.R
 
 
 class SettingsFragment : Fragment() {

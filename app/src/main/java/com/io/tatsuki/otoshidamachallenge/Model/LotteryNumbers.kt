@@ -1,4 +1,4 @@
-package com.io.tatsuki.otoshidamachallenge
+package com.io.tatsuki.otoshidamachallenge.Model
 
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi

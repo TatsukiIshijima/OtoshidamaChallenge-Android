@@ -1,9 +1,9 @@
 package com.io.tatsuki.otoshidamachallenge.Repository
 
 import com.io.tatsuki.otoshidamachallenge.DataSource.ILotteryNumbersDataSource
-import com.io.tatsuki.otoshidamachallenge.LotteryNumbers
-import com.io.tatsuki.otoshidamachallenge.toJson
-import com.io.tatsuki.otoshidamachallenge.toLotteryNumbers
+import com.io.tatsuki.otoshidamachallenge.Model.LotteryNumbers
+import com.io.tatsuki.otoshidamachallenge.Model.toJson
+import com.io.tatsuki.otoshidamachallenge.Model.toLotteryNumbers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

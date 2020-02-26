@@ -1,4 +1,4 @@
-package com.io.tatsuki.otoshidamachallenge
+package com.io.tatsuki.otoshidamachallenge.View.Camera
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

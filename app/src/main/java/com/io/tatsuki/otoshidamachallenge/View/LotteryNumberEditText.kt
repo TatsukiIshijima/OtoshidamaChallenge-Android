@@ -1,9 +1,10 @@
-package com.io.tatsuki.otoshidamachallenge
+package com.io.tatsuki.otoshidamachallenge.View
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.io.tatsuki.otoshidamachallenge.R
 
 class LotteryNumberEditText @JvmOverloads constructor(
     context: Context,

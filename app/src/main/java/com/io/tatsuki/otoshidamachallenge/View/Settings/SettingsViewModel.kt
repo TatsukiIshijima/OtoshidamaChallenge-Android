@@ -1,10 +1,13 @@
-package com.io.tatsuki.otoshidamachallenge
+package com.io.tatsuki.otoshidamachallenge.View.Settings
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.io.tatsuki.otoshidamachallenge.Event
+import com.io.tatsuki.otoshidamachallenge.Model.LotteryNumbers
+import com.io.tatsuki.otoshidamachallenge.OtoshidamaChallengeApplication
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,11 +20,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             _lotteryNumbersEvent.value =
                 Event(
-                    application.
-                        otoshidamaChallengeAppContainer.
-                        lotteryNumbersRepository.
-                        loadLotteryNumbers()
-            )
+                    application.otoshidamaChallengeAppContainer.lotteryNumbersRepository.loadLotteryNumbers()
+                )
         }
     }
 
