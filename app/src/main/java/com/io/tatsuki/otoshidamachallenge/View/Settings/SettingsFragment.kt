@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.io.tatsuki.otoshidamachallenge.DI.AppContainer
+import com.io.tatsuki.otoshidamachallenge.DI.SettingsContainer
+import com.io.tatsuki.otoshidamachallenge.OtoshidamaChallengeApplication
 import com.io.tatsuki.otoshidamachallenge.R
 
 
@@ -17,7 +19,8 @@ class SettingsFragment : Fragment() {
         private val TAG = SettingsFragment::class.java.simpleName
     }
 
-    private val viewModel: SettingsViewModel by viewModels()
+    private lateinit var appContainer: AppContainer
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +31,12 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        appContainer = (requireActivity().application as OtoshidamaChallengeApplication).appContainer
+        appContainer.settingsContainer = SettingsContainer(appContainer.lotteryNumbersRepository)
+        val settingsContainer =
+            appContainer.settingsContainer ?: throw NullPointerException("SettingsContainer is null.")
+        viewModel = settingsContainer.settingsViewModelFactory.create()
 
         viewModel.lotteryNumbersEvent.observe(viewLifecycleOwner, Observer { event ->
             event.getContentIfNotHandled()?.let {
@@ -40,5 +49,10 @@ class SettingsFragment : Fragment() {
         super.onStart()
 
         viewModel.getLotteryNumbers()
+    }
+
+    override fun onDestroyView() {
+        appContainer.settingsContainer = null
+        super.onDestroyView()
     }
 }

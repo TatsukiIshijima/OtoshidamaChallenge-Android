@@ -1,15 +1,15 @@
 package com.io.tatsuki.otoshidamachallenge
 
 import android.app.Application
-import com.io.tatsuki.otoshidamachallenge.DI.OtoshidamaChallengeAppContainer
+import com.io.tatsuki.otoshidamachallenge.DI.AppContainer
 
 class OtoshidamaChallengeApplication : Application() {
 
-    lateinit var otoshidamaChallengeAppContainer: OtoshidamaChallengeAppContainer
+    lateinit var appContainer: AppContainer
 
     override fun onCreate() {
         super.onCreate()
 
-        otoshidamaChallengeAppContainer = OtoshidamaChallengeAppContainer(applicationContext)
+        appContainer = AppContainer(this.applicationContext)
     }
 }
