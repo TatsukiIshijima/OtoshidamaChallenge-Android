@@ -22,7 +22,7 @@ class LotteryNumberEditText @JvmOverloads constructor(
     }
 
     fun setEnableEdit(isEnable: Boolean) {
-        bSetNumber.isEnabled = isEnabled
-        classNumber.isEnabled = isEnabled
+        bSetNumber.isEnabled = isEnable
+        classNumber.isEnabled = isEnable
     }
 }
