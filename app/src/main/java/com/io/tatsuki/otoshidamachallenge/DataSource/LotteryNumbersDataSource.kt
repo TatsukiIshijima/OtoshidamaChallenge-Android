@@ -7,12 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 class LotteryNumbersDataSource(context: Context) : ILotteryNumbersDataSource {
 
     private companion object {
-        const val DATA_STORE_NAME = "LotteryNumbersDataStore"
+        const val FILE_NAME = "LotteryNumbersDataSource"
         const val DATA_KEY = "LotteryNumbersKey"
     }
 
     private var sharedPreferences: SharedPreferences =
-        context.getSharedPreferences(DATA_STORE_NAME, AppCompatActivity.MODE_PRIVATE)
+        context.getSharedPreferences(FILE_NAME, AppCompatActivity.MODE_PRIVATE)
     private val editor = sharedPreferences.edit()
 
     override suspend fun saveData(lotteryNumbersJson: String) {
