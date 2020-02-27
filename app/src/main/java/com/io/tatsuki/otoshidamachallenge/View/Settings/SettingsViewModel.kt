@@ -22,9 +22,9 @@ class SettingsViewModel(
         }
     }
 
-    suspend fun saveLotteryNumbers(lotteryNumbers: LotteryNumbers) {
+    fun saveLotteryNumbers(lotteryNumbers: LotteryNumbers) {
         viewModelScope.launch {
-            repository.loadLotteryNumbers()
+            repository.saveLotteryNumbers(lotteryNumbers)
         }
     }
 }

@@ -19,4 +19,6 @@
     <string name="edit_mode">編集</string>
     <string name="save_mode">保存</string>
     <string name="cancel">キャンセル</string>
+    <string name="save_confirm_dialog_title">番号の保存</string>
+    <string name="save_confirm_dialog_message">入力されたくじ番号を保存し、設定します。よろしいですか？</string>
 </resources>
