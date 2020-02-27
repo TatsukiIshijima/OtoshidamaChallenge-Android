@@ -169,22 +169,22 @@
                     android:text="@string/special_class_hint_primary"
                     android:textSize="18sp"/>
 
-                <com.io.tatsuki.otoshidamachallenge.View.LotteryNumberEditText
+                <com.io.tatsuki.otoshidamachallenge.View.Settings.LotteryNumberEditText
                     android:id="@+id/specialLotteryPrimaryNumberEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-                <com.io.tatsuki.otoshidamachallenge.View.LotteryNumberEditText
+                <com.io.tatsuki.otoshidamachallenge.View.Settings.LotteryNumberEditText
                     android:id="@+id/specialLotterySecondaryNumberEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-                <com.io.tatsuki.otoshidamachallenge.View.LotteryNumberEditText
+                <com.io.tatsuki.otoshidamachallenge.View.Settings.LotteryNumberEditText
                     android:id="@+id/specialLotteryTertiaryNumberEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-                <com.io.tatsuki.otoshidamachallenge.View.LotteryNumberEditText
+                <com.io.tatsuki.otoshidamachallenge.View.Settings.LotteryNumberEditText
                     android:id="@+id/specialLotteryQuaternaryNumberEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
@@ -198,7 +198,7 @@
                     android:text="@string/special_class_hint_secondary"
                     android:textSize="18sp"/>
 
-                <com.io.tatsuki.otoshidamachallenge.View.LotteryNumberEditText
+                <com.io.tatsuki.otoshidamachallenge.View.Settings.LotteryNumberEditText
                     android:id="@+id/specialLotteryQuinaryNumberEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>

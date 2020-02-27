@@ -1,4 +1,4 @@
-package com.io.tatsuki.otoshidamachallenge.View
+package com.io.tatsuki.otoshidamachallenge.View.Settings
 
 import android.content.Context
 import android.util.AttributeSet
