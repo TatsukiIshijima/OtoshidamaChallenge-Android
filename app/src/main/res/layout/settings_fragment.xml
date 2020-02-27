@@ -102,7 +102,7 @@
                     android:textColor="@color/colorPrimary"/>
 
                 <EditText
-                    android:id="@+id/thridClassNumberPrimary"
+                    android:id="@+id/thirdClassNumberPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
@@ -115,7 +115,7 @@
                     tools:enabled="true"/>
 
                 <EditText
-                    android:id="@+id/thridClassNumberSecondary"
+                    android:id="@+id/thirdClassNumberSecondary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -129,7 +129,7 @@
                     tools:enabled="true"/>
 
                 <EditText
-                    android:id="@+id/thridClassNumberTertiary"
+                    android:id="@+id/thirdClassNumberTertiary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"

@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.io.tatsuki.otoshidamachallenge.R
+import kotlinx.android.synthetic.main.lottery_number_edittext_view.view.*
 
 class LotteryNumberEditText @JvmOverloads constructor(
     context: Context,
@@ -18,6 +19,10 @@ class LotteryNumberEditText @JvmOverloads constructor(
 
     override fun onFinishInflate() {
         super.onFinishInflate()
+    }
 
+    fun setEnableEdit(isEnable: Boolean) {
+        bSetNumber.isEnabled = isEnabled
+        classNumber.isEnabled = isEnabled
     }
 }
