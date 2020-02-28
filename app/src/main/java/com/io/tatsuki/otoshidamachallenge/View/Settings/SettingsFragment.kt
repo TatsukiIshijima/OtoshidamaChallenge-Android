@@ -1,7 +1,7 @@
 package com.io.tatsuki.otoshidamachallenge.View.Settings
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,11 +42,12 @@ class SettingsFragment : Fragment() {
             appContainer.settingsContainer ?: throw NullPointerException("SettingsContainer is null.")
         viewModel = settingsContainer.settingsViewModelFactory.create()
 
-        viewModel.lotteryNumbersEvent.observe(viewLifecycleOwner, Observer { event ->
-            event.getContentIfNotHandled()?.let {
-                Log.d(TAG, it.firstClass)
+        viewModel.lotteryNumbersEvent.observe(
+            viewLifecycleOwner,
+            Observer {
+                setLotteryNumbers(it)
             }
-        })
+        )
 
         editButton.setOnClickListener {
             updateBottomButtonLayout(true)
@@ -60,6 +61,7 @@ class SettingsFragment : Fragment() {
         cancelButton.setOnClickListener {
             updateBottomButtonLayout(false)
             setEditMode(false)
+            viewModel.getLotteryNumbers()
         }
     }
 
@@ -72,6 +74,40 @@ class SettingsFragment : Fragment() {
     override fun onDestroyView() {
         appContainer.settingsContainer = null
         super.onDestroyView()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setLotteryNumbers(lotteryNumbers: LotteryNumbers) {
+        firstClassNumber.setText(lotteryNumbers.firstClass)
+        secondClassNumber.setText("**${lotteryNumbers.secondClass}")
+        thirdClassNumberPrimary.setText("****${lotteryNumbers.thirdClassNumberPrimary}")
+        thirdClassNumberSecondary.setText("****${lotteryNumbers.thirdClassNumberSecondary}")
+        thirdClassNumberTertiary.setText("****${lotteryNumbers.thirdClassNumberTertiary}")
+        specialLotteryPrimaryNumberEditText
+            .setLotteryNumber(
+                lotteryNumbers.specialPrimaryForward,
+                lotteryNumbers.specialPrimaryBackward
+            )
+        specialLotterySecondaryNumberEditText
+            .setLotteryNumber(
+                lotteryNumbers.specialSecondaryForward,
+                lotteryNumbers.specialSecondaryBackward
+            )
+        specialLotteryTertiaryNumberEditText
+            .setLotteryNumber(
+                lotteryNumbers.specialTertiaryForward,
+                lotteryNumbers.specialTertiaryBackward
+            )
+        specialLotteryQuaternaryNumberEditText
+            .setLotteryNumber(
+                lotteryNumbers.specialQuaternaryForward,
+                lotteryNumbers.specialQuaternaryBackward
+            )
+        specialLotteryQuinaryNumberEditText
+            .setLotteryNumber(
+                "***${lotteryNumbers.specialQuinaryForward}",
+                lotteryNumbers.specialQuinaryBackward
+            )
     }
 
     private fun setEditMode(isEnable: Boolean) {
@@ -101,7 +137,9 @@ class SettingsFragment : Fragment() {
                 // TODO:EditTextの値取得
                 viewModel.saveLotteryNumbers(LotteryNumbers())
             }
-            .setNegativeButton(R.string.cancel) { _, _ -> }
+            .setNegativeButton(R.string.cancel) { _, _ ->
+
+            }
             .show()
     }
 }

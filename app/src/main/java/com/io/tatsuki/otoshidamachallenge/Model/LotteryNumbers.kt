@@ -17,7 +17,9 @@ data class LotteryNumbers(
     val specialQuinaryBackward: String = "",
     val firstClass: String = "",
     val secondClass: String = "",
-    val thirdClass: String = ""
+    val thirdClassNumberPrimary: String = "",
+    val thirdClassNumberSecondary: String = "",
+    val thirdClassNumberTertiary: String = ""
 )
 
 fun LotteryNumbers.toJson(): String {

@@ -25,4 +25,9 @@ class LotteryNumberEditText @JvmOverloads constructor(
         bSetNumber.isEnabled = isEnable
         classNumber.isEnabled = isEnable
     }
+
+    fun setLotteryNumber(bSetNumberText: String, classNumberText: String) {
+        bSetNumber.setText(bSetNumberText)
+        classNumber.setText(classNumberText)
+    }
 }
