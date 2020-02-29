@@ -21,4 +21,10 @@
     <string name="cancel">キャンセル</string>
     <string name="save_confirm_dialog_title">番号の保存</string>
     <string name="save_confirm_dialog_message">入力されたくじ番号を保存し、設定します。よろしいですか？</string>
+    <string name="input_class_length_error_title">入力エラー</string>
+    <string name="first_class_length_short">1等に入力されたくじ番号が6桁ではありません。</string>
+    <string name="second_class_length_short">2等に入力されたくじ番号が4桁ではありません。</string>
+    <string name="third_class_length_short">3等に入力されたくじ番号が2桁ではありません。</string>
+    <string name="special_set_length_short">特等に入力された組番号の桁数に誤りがあります。</string>
+    <string name="special_class_length_short">特等に入力されたくじ番号が6桁ではありません。</string>
 </resources>

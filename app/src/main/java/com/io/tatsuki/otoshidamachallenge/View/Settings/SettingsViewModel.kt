@@ -26,4 +26,12 @@ class SettingsViewModel(
             repository.saveLotteryNumbers(lotteryNumbers)
         }
     }
+
+    fun validateLength(numberText: String, length: Int): Boolean {
+        return numberText.length == length
+    }
+
+    fun removeWildCard(numberText: String): String {
+        return numberText.replace("*", "")
+    }
 }
