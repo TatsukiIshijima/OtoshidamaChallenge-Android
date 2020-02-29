@@ -14,7 +14,8 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText
 import java.io.ByteArrayOutputStream
 
 class TextAnalyzer(
-    private val result: MutableLiveData<String>,
+    private val classNumberResult: MutableLiveData<String>,
+    private val lotteryNumberResult: MutableLiveData<String>,
     private val widthCropPercent: Int,
     private val heightCropPercent: Int
 ) : ImageAnalysis.Analyzer {
@@ -24,36 +25,45 @@ class TextAnalyzer(
     }
 
     private val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
-    private var isBusy = false
+    private var classNumberAnalyzerIsBusy = false
+    private var lotteryNumberAnalyzerIsBusy = false
 
     override fun analyze(imageProxy: ImageProxy, rotationDegrees: Int) {
         val mediaImage = imageProxy.image
-        if (mediaImage != null && !isBusy) {
-            isBusy = true
+        if (mediaImage != null && !classNumberAnalyzerIsBusy && !lotteryNumberAnalyzerIsBusy) {
+            classNumberAnalyzerIsBusy = true
+            lotteryNumberAnalyzerIsBusy = true
             val imageRotation = degreesToFirebaseRotation(rotationDegrees)
             val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
             val bitmap = image.bitmap
             val croppedWidth = (bitmap.width * (1 - widthCropPercent / 100f)).toInt()
             val croppedHeight = (bitmap.height * (1 - heightCropPercent / 100f)).toInt()
-            val x = (bitmap.width - croppedWidth) / 2
+            val x1 = ((bitmap.width - croppedWidth) / 2) - (bitmap.width / 4)
+            val x2 = ((bitmap.width - croppedWidth) / 2) + (bitmap.width / 4)
             val y = (bitmap.height - croppedHeight) / 2
-            val cropBmp = Bitmap.createBitmap(bitmap, x, y, croppedWidth, croppedHeight)
-            recognizeTextOnDevice(FirebaseVisionImage.fromBitmap(cropBmp))
-                .addOnCompleteListener { isBusy = false }
+            val classNumberCropBmp = Bitmap.createBitmap(bitmap, x1, y, croppedWidth, croppedHeight)
+            val lotteryNumberCropBmp = Bitmap.createBitmap(bitmap, x2, y, croppedWidth, croppedHeight)
+            recognizeTextOnDevice(FirebaseVisionImage.fromBitmap(classNumberCropBmp), classNumberResult)
+                .addOnCompleteListener { classNumberAnalyzerIsBusy = false }
+            recognizeTextOnDevice(FirebaseVisionImage.fromBitmap(lotteryNumberCropBmp), lotteryNumberResult)
+                .addOnCompleteListener { lotteryNumberAnalyzerIsBusy = false }
+
         }
     }
 
     private fun recognizeTextOnDevice(
-        image: FirebaseVisionImage
+        image: FirebaseVisionImage,
+        result: MutableLiveData<String>
     ): Task<FirebaseVisionText> {
         return detector.processImage(image)
             .addOnSuccessListener { firebaseVisionText ->
                 // Task completed successfully
                 result.value = firebaseVisionText.text
+                //Log.d(TAG, "${firebaseVisionText.text}")
             }
             .addOnFailureListener { exception ->
                 // Task failed with an exception
-                exception.message.let {
+                exception.message?.let {
                     Log.e(TAG, it)
                 }
             }

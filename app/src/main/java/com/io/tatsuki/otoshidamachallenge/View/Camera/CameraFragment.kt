@@ -9,7 +9,6 @@ import android.view.*
 import androidx.camera.core.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.io.tatsuki.otoshidamachallenge.R
@@ -21,7 +20,7 @@ class CameraFragment : Fragment() {
 
     companion object {
         private val TAG = CameraFragment::class.java.simpleName
-        private const val WIDTH_CROP_PERCENT = 8
+        private const val WIDTH_CROP_PERCENT = 65
         private const val HEIGHT_CROP_PERCENT = 74
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
@@ -67,7 +66,7 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(CameraViewModel::class.java)
+        viewModel = CameraViewModel()
 
         viewFinder.post {
             startCamera()
@@ -95,11 +94,14 @@ class CameraFragment : Fragment() {
             })
         }
 
-        viewModel.resultText.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) {
-                recognitionResult.text = it
+        viewModel.combinedAnalyzeResult.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (!it.isNullOrEmpty()) {
+                    recognitionResult.text = it
+                }
             }
-        })
+        )
     }
 
     private fun startCamera() {
@@ -132,7 +134,8 @@ class CameraFragment : Fragment() {
 
         val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
             analyzer = TextAnalyzer(
-                viewModel.resultText,
+                viewModel.classNumberAnalyzeResult,
+                viewModel.lotteryNumberAnalyzeResult,
                 WIDTH_CROP_PERCENT,
                 HEIGHT_CROP_PERCENT
             )
@@ -180,16 +183,21 @@ class CameraFragment : Fragment() {
         val cornerRadius = 25f
         // Set rect centered in frame
         val rectTop = surfaceHeight * HEIGHT_CROP_PERCENT / 2 / 100f
-        val rectLeft = surfaceWidth * WIDTH_CROP_PERCENT / 2 / 100f
-        val rectRight = surfaceWidth * (1 - WIDTH_CROP_PERCENT / 2 / 100f)
         val rectBottom = surfaceHeight * (1 - HEIGHT_CROP_PERCENT / 2 / 100f)
-        val rect = RectF(rectLeft, rectTop, rectRight, rectBottom)
-        canvas.drawRoundRect(
-            rect, cornerRadius, cornerRadius, rectPaint
-        )
-        canvas.drawRoundRect(
-            rect, cornerRadius, cornerRadius, outlinePaint
-        )
+        val classNumberRectLeft = (surfaceWidth * WIDTH_CROP_PERCENT / 2 / 100f) - (surfaceWidth / 4)
+        val classNumberRectRight = (surfaceWidth * (1 - WIDTH_CROP_PERCENT / 2 / 100f)) - (surfaceWidth / 4)
+        val classNumberRect =
+            RectF(classNumberRectLeft, rectTop, classNumberRectRight, rectBottom)
+        val lotteryNumberRectLeft = (surfaceWidth * WIDTH_CROP_PERCENT / 2 / 100f) + (surfaceWidth / 4)
+        val lotteryNumberRectRight = (surfaceWidth * (1 - WIDTH_CROP_PERCENT / 2 / 100f)) + (surfaceWidth / 4)
+        val lotteryNumberRect =
+            RectF(lotteryNumberRectLeft, rectTop, lotteryNumberRectRight, rectBottom)
+
+        canvas.drawRoundRect(classNumberRect, cornerRadius, cornerRadius, rectPaint)
+        canvas.drawRoundRect(classNumberRect, cornerRadius, cornerRadius, outlinePaint)
+        canvas.drawRoundRect(lotteryNumberRect, cornerRadius, cornerRadius, rectPaint)
+        canvas.drawRoundRect(lotteryNumberRect, cornerRadius, cornerRadius, outlinePaint)
+
         val textPaint = Paint()
         textPaint.color = Color.WHITE
         textPaint.textSize = 50F

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">お年玉チャレンジ</string>
     <string name="settings_title">設定</string>
-    <string name="overlay_help">中央に番号を合わせてください</string>
+    <string name="overlay_help">枠内に番号を合わせてください</string>
     <string name="downloading_model_files">準備中…</string>
     <string name="recognition_result_title">認識結果</string>
     <string name="camera_permission_denied_title">権限エラー</string>

@@ -1,10 +1,24 @@
 package com.io.tatsuki.otoshidamachallenge.View.Camera
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 
-class CameraViewModel(application: Application) : AndroidViewModel(application) {
+class CameraViewModel : ViewModel() {
 
-    val resultText = MutableLiveData<String>()
+    val classNumberAnalyzeResult = MutableLiveData<String>()
+    val lotteryNumberAnalyzeResult = MutableLiveData<String>()
+
+    private val _combinedAnalyzeResult = MediatorLiveData<String>()
+    val combinedAnalyzeResult: LiveData<String> = _combinedAnalyzeResult
+
+    init {
+        val analyzeObserver = Observer<String> {
+            val classNumberText = classNumberAnalyzeResult.value ?: ""
+            val lotteryNumberText = lotteryNumberAnalyzeResult.value ?: ""
+            if (classNumberText.isNotEmpty() && lotteryNumberText.isNotEmpty()) {
+                _combinedAnalyzeResult.value = "${classNumberText}${lotteryNumberText}"
+            }
+        }
+        _combinedAnalyzeResult.addSource(classNumberAnalyzeResult, analyzeObserver)
+        _combinedAnalyzeResult.addSource(lotteryNumberAnalyzeResult, analyzeObserver)
+    }
 }
