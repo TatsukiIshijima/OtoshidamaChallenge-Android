@@ -12,4 +12,6 @@ class AppContainer constructor(context: Context) {
     val lotteryNumbersRepository = LotteryNumbersRepository(lotteryNumbersDataSource)
 
     var settingsContainer: SettingsContainer? = null
+
+    var cameraContainer: CameraContainer? = null
 }

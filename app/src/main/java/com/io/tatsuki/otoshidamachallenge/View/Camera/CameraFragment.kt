@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.io.tatsuki.otoshidamachallenge.DI.AppContainer
+import com.io.tatsuki.otoshidamachallenge.DI.CameraContainer
+import com.io.tatsuki.otoshidamachallenge.OtoshidamaChallengeApplication
 import com.io.tatsuki.otoshidamachallenge.R
 import com.io.tatsuki.otoshidamachallenge.TextAnalyzer
 import com.io.tatsuki.otoshidamachallenge.View.Permission.PermissionFragment
@@ -26,6 +29,7 @@ class CameraFragment : Fragment() {
         private const val RATIO_16_9_VALUE = 16.0 / 9.0
     }
 
+    private lateinit var appContainer: AppContainer
     private lateinit var viewModel: CameraViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +70,11 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = CameraViewModel()
+        appContainer = (requireActivity().application as OtoshidamaChallengeApplication).appContainer
+        appContainer.cameraContainer = CameraContainer(appContainer.lotteryNumbersRepository)
+        val cameraContainer =
+            appContainer.cameraContainer ?: throw NullPointerException("CameraContainer is null.")
+        viewModel = cameraContainer.cameraViewModelFactory.create()
 
         viewFinder.post {
             startCamera()
@@ -102,6 +110,11 @@ class CameraFragment : Fragment() {
                 }
             }
         )
+    }
+
+    override fun onDestroyView() {
+        appContainer.cameraContainer = null
+        super.onDestroyView()
     }
 
     private fun startCamera() {

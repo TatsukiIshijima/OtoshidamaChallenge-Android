@@ -1,8 +1,11 @@
 package com.io.tatsuki.otoshidamachallenge.View.Camera
 
 import androidx.lifecycle.*
+import com.io.tatsuki.otoshidamachallenge.Repository.ILotteryNumbersRepository
 
-class CameraViewModel : ViewModel() {
+class CameraViewModel(
+    private val repository: ILotteryNumbersRepository
+) : ViewModel() {
 
     val classNumberAnalyzeResult = MutableLiveData<String>()
     val lotteryNumberAnalyzeResult = MutableLiveData<String>()
