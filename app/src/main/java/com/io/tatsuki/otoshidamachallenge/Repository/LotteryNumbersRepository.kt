@@ -11,9 +11,13 @@ class LotteryNumbersRepository(
     private val lotteryNumbersDataStore: ILotteryNumbersDataSource
 ) : ILotteryNumbersRepository {
 
+    var cacheLotteryNumbers: LotteryNumbers? = null
+
     override suspend fun loadLotteryNumbers(): LotteryNumbers =
         withContext(Dispatchers.IO) {
-            lotteryNumbersDataStore.loadData().toLotteryNumbers()
+            val lotteryNumbers = lotteryNumbersDataStore.loadData()
+            cacheLotteryNumbers = lotteryNumbers.toLotteryNumbers()
+            lotteryNumbers.toLotteryNumbers()
         }
 
     override suspend fun saveLotteryNumbers(lotteryNumbers: LotteryNumbers) =
