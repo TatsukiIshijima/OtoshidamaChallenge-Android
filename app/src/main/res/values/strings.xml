@@ -27,4 +27,9 @@
     <string name="third_class_length_short">3等に入力されたくじ番号が2桁ではありません。</string>
     <string name="special_set_length_short">特等に入力された組番号の桁数に誤りがあります。</string>
     <string name="special_class_length_short">特等に入力されたくじ番号が6桁ではありません。</string>
+    <string name="hit_first_class">おめでおとうございます！\n1等に当選しました！</string>
+    <string name="hit_second_class">おめでおとうございます！\n2等に当選しました！</string>
+    <string name="hit_third_class">おめでおとうございます！\n3等に当選しました！</string>
+    <string name="hit_special_primary_class">おめでおとうございます！\n特等(1)に当選しました！</string>
+    <string name="hit_special_secondary_class">おめでおとうございます！\n特等(2)に当選しました！</string>
 </resources>
