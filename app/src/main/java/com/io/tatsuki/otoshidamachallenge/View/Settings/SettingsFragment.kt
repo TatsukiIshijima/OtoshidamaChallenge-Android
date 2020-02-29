@@ -154,6 +154,8 @@ class SettingsFragment : Fragment() {
         specialLotteryTertiaryNumberEditText.setEnableEdit(isEnable)
         specialLotteryQuaternaryNumberEditText.setEnableEdit(isEnable)
         specialLotteryQuinaryNumberEditText.setEnableEdit(isEnable)
+        specialHintPrimaryText.isVisible = isEnable
+        specialHintSecondaryText.isVisible = isEnable
     }
 
     private fun updateBottomButtonLayout(isEditMode: Boolean) {

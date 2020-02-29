@@ -167,7 +167,9 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/special_class_hint_primary"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
 
                 <com.io.tatsuki.otoshidamachallenge.View.Settings.LotteryNumberEditText
                     android:id="@+id/specialLotteryPrimaryNumberEditText"
@@ -196,7 +198,9 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:text="@string/special_class_hint_secondary"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
 
                 <com.io.tatsuki.otoshidamachallenge.View.Settings.LotteryNumberEditText
                     android:id="@+id/specialLotteryQuinaryNumberEditText"
