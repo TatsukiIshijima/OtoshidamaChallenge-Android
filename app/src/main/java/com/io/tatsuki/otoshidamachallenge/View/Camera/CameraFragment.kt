@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.io.tatsuki.otoshidamachallenge.DI.AppContainer
 import com.io.tatsuki.otoshidamachallenge.DI.CameraContainer
+import com.io.tatsuki.otoshidamachallenge.MatchingRank
 import com.io.tatsuki.otoshidamachallenge.OtoshidamaChallengeApplication
 import com.io.tatsuki.otoshidamachallenge.R
 import com.io.tatsuki.otoshidamachallenge.TextAnalyzer
@@ -76,9 +77,6 @@ class CameraFragment : Fragment() {
             appContainer.cameraContainer ?: throw NullPointerException("CameraContainer is null.")
         viewModel = cameraContainer.cameraViewModelFactory.create()
 
-        viewFinder.post {
-            startCamera()
-        }
         viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateTransform()
         }
@@ -102,14 +100,46 @@ class CameraFragment : Fragment() {
             })
         }
 
+        viewModel.isCompletedGetLotteryNumbersData.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (it) {
+                    viewFinder.post {
+                        startCamera()
+                    }
+                }
+            }
+        )
+
         viewModel.combinedAnalyzeResult.observe(
             viewLifecycleOwner,
             Observer {
                 if (!it.isNullOrEmpty()) {
                     recognitionResult.text = it
+                    viewModel.matchLotteryNumbers(it)
                 }
             }
         )
+
+        viewModel.matchingRankResult.observe(
+            viewLifecycleOwner,
+            Observer {
+                when(it) {
+                    MatchingRank.FIRST -> matchingRank.text = getString(R.string.hit_first_class)
+                    MatchingRank.SECOND -> matchingRank.text = getString(R.string.hit_second_class)
+                    MatchingRank.THIRD -> matchingRank.text = getString(R.string.hit_third_class)
+                    MatchingRank.SPECIAL_PRIMARY -> matchingRank.text = getString(R.string.hit_special_primary_class)
+                    MatchingRank.SPECIAL_SECONDARY -> matchingRank.text = getString(R.string.hit_special_secondary_class)
+                    MatchingRank.NONE -> matchingRank.text = ""
+                }
+            }
+        )
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.getLotteryNumbers()
     }
 
     override fun onDestroyView() {
@@ -222,16 +252,5 @@ class CameraFragment : Fragment() {
         val textY = rectBottom + textBounds.height() + 15f // put text below rect and 15f padding
         canvas.drawText(getString(R.string.overlay_help), textX, textY, textPaint)
         holder.unlockCanvasAndPost(canvas)
-    }
-
-    private fun showProgress(isShow: Boolean) {
-        progressBar.visibility = if (isShow) View.VISIBLE else View.GONE
-        progressText.visibility = if (isShow) View.VISIBLE else View.GONE
-    }
-
-    private fun showMainContent(isShow: Boolean) {
-        recognitionResultTitle.visibility = if (isShow) View.VISIBLE else View.GONE
-        recognitionResult.visibility = if (isShow) View.VISIBLE else View.GONE
-        matchingRank.visibility = if (isShow) View.VISIBLE else View.GONE
     }
 }
