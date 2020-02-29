@@ -1,8 +1,8 @@
 package com.io.tatsuki.otoshidamachallenge.DI
 
-import com.io.tatsuki.otoshidamachallenge.Repository.ILotteryNumbersRepository
+import com.io.tatsuki.otoshidamachallenge.Repository.LotteryNumbersRepository
 
-class CameraContainer(repository: ILotteryNumbersRepository) {
+class CameraContainer(repository: LotteryNumbersRepository) {
 
     val cameraViewModelFactory = CameraViewModelFactory(repository)
 }
