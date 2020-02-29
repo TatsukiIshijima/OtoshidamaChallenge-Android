@@ -18,7 +18,8 @@ class LotteryNumbersDataSource(context: Context) : ILotteryNumbersDataSource {
     override suspend fun saveData(lotteryNumbersJson: String) {
         editor.apply {
             putString(DATA_KEY, lotteryNumbersJson)
-        }
+        }.commit()
+
     }
 
     override suspend fun loadData(): String {

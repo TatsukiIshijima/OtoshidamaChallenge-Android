@@ -171,10 +171,7 @@ class SettingsFragment : Fragment() {
                 if (messageResource != 0) {
                     showValidateErrorDialog(messageResource)
                 } else {
-                    // TODO:EditTextの値取得
-                    viewModel.saveLotteryNumbers(
-                        LotteryNumbers()
-                    )
+                    saveLotteryNumbers()
                     updateBottomButtonLayout(false)
                     setEditMode(false)
                     viewModel.getLotteryNumbers()
@@ -220,5 +217,27 @@ class SettingsFragment : Fragment() {
             .setMessage(messageResource)
             .setPositiveButton(R.string.alert_dialog_positive_button_title) { _, _ -> }
             .show()
+    }
+
+    private fun saveLotteryNumbers() {
+        viewModel.saveLotteryNumbers(
+            LotteryNumbers(
+                firstClass = firstClassNumber.text.toString(),
+                secondClass = secondClassNumber.text.toString(),
+                thirdClassNumberPrimary = thirdClassNumberPrimary.text.toString(),
+                thirdClassNumberSecondary = thirdClassNumberSecondary.text.toString(),
+                thirdClassNumberTertiary = thirdClassNumberTertiary.text.toString(),
+                specialPrimaryForward = specialLotteryPrimaryNumberEditText.bSetNumber.text.toString(),
+                specialPrimaryBackward = specialLotteryPrimaryNumberEditText.classNumber.text.toString(),
+                specialSecondaryForward = specialLotterySecondaryNumberEditText.bSetNumber.text.toString(),
+                specialSecondaryBackward = specialLotterySecondaryNumberEditText.classNumber.text.toString(),
+                specialTertiaryForward = specialLotteryTertiaryNumberEditText.bSetNumber.text.toString(),
+                specialTertiaryBackward = specialLotteryTertiaryNumberEditText.classNumber.text.toString(),
+                specialQuaternaryForward = specialLotteryQuaternaryNumberEditText.bSetNumber.text.toString(),
+                specialQuaternaryBackward = specialLotteryQuaternaryNumberEditText.classNumber.text.toString(),
+                specialQuinaryForward = specialLotteryQuinaryNumberEditText.bSetNumber.text.toString(),
+                specialQuinaryBackward = specialLotteryQuinaryNumberEditText.classNumber.text.toString()
+            )
+        )
     }
 }
