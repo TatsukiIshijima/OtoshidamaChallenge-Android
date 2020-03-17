@@ -1,12 +1,21 @@
 package com.io.tatsuki.otoshidamachallenge.View.Camera
 
+import android.content.Context
 import android.graphics.*
+import android.hardware.display.DisplayManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
-import android.util.Rational
-import android.view.*
-import androidx.camera.core.*
+import android.util.DisplayMetrics
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.SurfaceHolder
+import android.view.View
+import android.view.ViewGroup
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -19,6 +28,11 @@ import com.io.tatsuki.otoshidamachallenge.R
 import com.io.tatsuki.otoshidamachallenge.TextAnalyzer
 import com.io.tatsuki.otoshidamachallenge.View.Permission.PermissionFragment
 import kotlinx.android.synthetic.main.camera_fragment.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class CameraFragment : Fragment() {
 
@@ -32,6 +46,28 @@ class CameraFragment : Fragment() {
 
     private lateinit var appContainer: AppContainer
     private lateinit var viewModel: CameraViewModel
+    private lateinit var cameraExecutor: ExecutorService
+
+    private var displayId: Int = -1
+    private var imageAnalyzer: ImageAnalysis? = null
+    private var camera: Camera? = null
+    private var preview: Preview? = null
+
+    private val lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    private val displayManager by lazy {
+        requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    }
+
+    private val displayListener = object : DisplayManager.DisplayListener {
+        override fun onDisplayAdded(displayId: Int) = Unit
+        override fun onDisplayRemoved(displayId: Int) = Unit
+        override fun onDisplayChanged(displayId: Int) = view?.let { view ->
+            if (displayId == this@CameraFragment.displayId) {
+                Log.d(TAG, "Rotaion changed ${view.display.rotation}")
+                imageAnalyzer?.targetRotation = view.display.rotation
+            }
+        } ?: Unit
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,24 +112,15 @@ class CameraFragment : Fragment() {
         val cameraContainer =
             appContainer.cameraContainer ?: throw NullPointerException("CameraContainer is null.")
         viewModel = cameraContainer.cameraViewModelFactory.create()
-
-        viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            updateTransform()
-        }
+        cameraExecutor = Executors.newSingleThreadExecutor()
+        displayManager.registerDisplayListener(displayListener, null)
 
         overlay.apply {
             setZOrderOnTop(true)
             holder.setFormat(PixelFormat.TRANSPARENT)
             holder.addCallback(object : SurfaceHolder.Callback {
-
-                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) {
-                    // noop
-                }
-
-                override fun surfaceDestroyed(holder: SurfaceHolder?) {
-                    // noop
-                }
-
+                override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) = Unit
+                override fun surfaceDestroyed(holder: SurfaceHolder?) = Unit
                 override fun surfaceCreated(holder: SurfaceHolder?) {
                     holder?.let { drawOverlay(it) }
                 }
@@ -105,6 +132,7 @@ class CameraFragment : Fragment() {
             Observer {
                 if (it) {
                     viewFinder.post {
+                        displayId = viewFinder.display.displayId
                         startCamera()
                     }
                 }
@@ -144,66 +172,69 @@ class CameraFragment : Fragment() {
 
     override fun onDestroyView() {
         appContainer.cameraContainer = null
+        cameraExecutor.shutdown()
+        displayManager.unregisterDisplayListener(displayListener)
         super.onDestroyView()
     }
 
     private fun startCamera() {
 
-        val previewConfig = PreviewConfig.Builder().apply {
-            setTargetAspectRatio(Rational(1, 1))
-        }.build()
+        val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+        Log.d(TAG, "Screen metrics: ${metrics.widthPixels} x ${metrics.heightPixels}")
 
-        val preview = Preview(previewConfig)
+        val screenAspectRatio = aspectRatio(metrics.widthPixels, metrics.heightPixels)
+        Log.d(TAG, "Preview aspect ratio: ${screenAspectRatio}")
 
-        preview.setOnPreviewOutputUpdateListener {
+        val rotation = viewFinder.display.rotation
 
-            val parent = viewFinder.parent as ViewGroup
-            parent.removeView(viewFinder)
-            parent.addView(viewFinder, 0)
+        val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
-            viewFinder.surfaceTexture = it.surfaceTexture
-            updateTransform()
-        }
+        cameraProviderFuture.addListener(Runnable {
 
-        val analyzerConfig = ImageAnalysisConfig.Builder().apply {
-            val analyzerThread = HandlerThread(
-                "TextAnalysis"
-            ).apply { start() }
-            setCallbackHandler(Handler(analyzerThread.looper))
-            setImageReaderMode(
-                ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE
-            )
-        }.build()
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-        val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            analyzer = TextAnalyzer(
-                viewModel.classNumberAnalyzeResult,
-                viewModel.lotteryNumberAnalyzeResult,
-                WIDTH_CROP_PERCENT,
-                HEIGHT_CROP_PERCENT
-            )
-        }
+            preview = Preview.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetRotation(rotation)
+                .build()
 
-        //CameraX.bindToLifecycle(viewLifecycleOwner, preview)
-        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
+            preview?.setSurfaceProvider(viewFinder.previewSurfaceProvider)
+
+            imageAnalyzer = ImageAnalysis.Builder()
+                .setTargetAspectRatio(screenAspectRatio)
+                .setTargetRotation(rotation)
+                .build()
+                .also {
+                    it.setAnalyzer(
+                        cameraExecutor,
+                        TextAnalyzer(
+                            viewModel.classNumberAnalyzeResult,
+                            viewModel.lotteryNumberAnalyzeResult,
+                            WIDTH_CROP_PERCENT,
+                            HEIGHT_CROP_PERCENT
+                        )
+                    )
+                }
+
+            cameraProvider.unbindAll()
+
+            try {
+                camera = cameraProvider.bindToLifecycle(
+                    viewLifecycleOwner, cameraSelector, preview, imageAnalyzer)
+            } catch (e: Exception) {
+                Log.e(TAG, "Use case binding failed", e)
+            }
+
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    private fun updateTransform() {
-        val matrix = Matrix()
-
-        val centerX = viewFinder.width / 2f
-        val centerY = viewFinder.height / 2f
-
-        val rotationDegrees = when (viewFinder.display.rotation) {
-            Surface.ROTATION_0 -> 0
-            Surface.ROTATION_90 -> 90
-            Surface.ROTATION_180 -> 180
-            Surface.ROTATION_270 -> 270
-            else -> return
+    private fun aspectRatio(width: Int, height: Int): Int {
+        val previewRatio = max(width, height).toDouble() / min(width, height)
+        if (abs(previewRatio - RATIO_4_3_VALUE) <= abs(previewRatio - RATIO_16_9_VALUE)) {
+            return RATIO_4_3_VALUE.toInt()
         }
-        matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
-
-        viewFinder.setTransform(matrix)
+        return RATIO_16_9_VALUE.toInt()
     }
 
     private fun drawOverlay(holder: SurfaceHolder) {

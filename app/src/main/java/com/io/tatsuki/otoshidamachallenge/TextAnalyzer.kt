@@ -1,5 +1,6 @@
 package com.io.tatsuki.otoshidamachallenge
 
+import android.annotation.SuppressLint
 import android.graphics.*
 import android.media.Image
 import android.util.Log
@@ -28,12 +29,13 @@ class TextAnalyzer(
     private var classNumberAnalyzerIsBusy = false
     private var lotteryNumberAnalyzerIsBusy = false
 
-    override fun analyze(imageProxy: ImageProxy, rotationDegrees: Int) {
+    @SuppressLint("UnsafeExperimentalUsageError")
+    override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image
         if (mediaImage != null && !classNumberAnalyzerIsBusy && !lotteryNumberAnalyzerIsBusy) {
             classNumberAnalyzerIsBusy = true
             lotteryNumberAnalyzerIsBusy = true
-            val imageRotation = degreesToFirebaseRotation(rotationDegrees)
+            val imageRotation = degreesToFirebaseRotation(imageProxy.imageInfo.rotationDegrees)
             val image = FirebaseVisionImage.fromMediaImage(mediaImage, imageRotation)
             val bitmap = image.bitmap
             val croppedWidth = (bitmap.width * (1 - widthCropPercent / 100f)).toInt()
@@ -47,8 +49,8 @@ class TextAnalyzer(
                 .addOnCompleteListener { classNumberAnalyzerIsBusy = false }
             recognizeTextOnDevice(FirebaseVisionImage.fromBitmap(lotteryNumberCropBmp), lotteryNumberResult)
                 .addOnCompleteListener { lotteryNumberAnalyzerIsBusy = false }
-
         }
+        imageProxy.close()
     }
 
     private fun recognizeTextOnDevice(
@@ -58,8 +60,8 @@ class TextAnalyzer(
         return detector.processImage(image)
             .addOnSuccessListener { firebaseVisionText ->
                 // Task completed successfully
+                //Log.d(TAG, "Analyze result: ${firebaseVisionText.text}")
                 result.value = firebaseVisionText.text
-                //Log.d(TAG, "${firebaseVisionText.text}")
             }
             .addOnFailureListener { exception ->
                 // Task failed with an exception
